@@ -40,6 +40,7 @@ iTitle.type ="text";
 iTitle.for="title";
 iTitle.textContent="Title";
 iTitle.required;
+const cloneTitle = lTitle.cloneNode(true);
 
 
 //Author
@@ -50,6 +51,7 @@ iAuthor.classList.add("author");
 iAuthor.type ="text";
 iAuthor.for="author";
 iAuthor.textContent="author";
+const cloneAuthor = lAuthor.cloneNode(true);
 
 //Pages
 lPages.classList.add("pages");
@@ -59,8 +61,9 @@ iPages.classList.add("pages");
 iPages.type ="number";
 iPages.for="pages";
 iPages.textContent="pages";
+const clonePages = lPages.cloneNode(true);
 
-//Read or not
+//Read
 lRead.classList.add("read");
 lRead.textContent="Did you read the book?";
 lRead.name="read";
@@ -68,13 +71,11 @@ iRead.classList.add("read");
 iRead.type ="checkbox";
 iRead.for="read";
 iRead.textContent="read";
+const cloneRead = lRead.cloneNode(true);
 
 //Button
 addBtn.classList.add("btn");
 addBtn.textContent="Add";
-addBtn.addEventListener("click",function(e){
-    addBookToLibrary();
-})
 
 //Form
 bookForm.classList.add("bookForm");
@@ -91,8 +92,7 @@ bookForm.appendChild(lRead);
 bookForm.appendChild(iRead);
 bookForm.appendChild(addBtn);
 
-//Open/Close form function
-
+//Toggle Forms
 function toggleAddBook(){
     if(bookContainer.style.display==="none"){
         bookContainer.style.display ="flex";
@@ -106,11 +106,75 @@ function toggleAddBook(){
     }
 }
 
+function toggleLibrary(){
+    if(libDiv.style.display ==="flex"){
+        libDiv.style.display = "none";
+    } else{
+        libDiv.style.display="flex";
+    }
+}
+
 addBookBtn.addEventListener("click",function(e){
     toggleAddBook();
+    toggleLibrary();
 })
 
-//Add book to library
+//Flex Layout for each Book
+const libDiv = document.createElement("div");
+const cards = document.createElement("div");
+const libTitle = document.createElement("input");
+const libAuthor = document.createElement("input");
+const libPages = document.createElement("input");
+const libRead = document.createElement("input");
+
+//Display Title
+libTitle.type="text";
+libTitle.classList.add("title");
+libTitle.for="title";
+libTitle.disabled = true;
+libTitle.value = "The Game of Thrones";
+
+//Display Author
+libAuthor.type="text";
+libAuthor.classList.add("author");
+libAuthor.for="author";
+libAuthor.disabled = true;
+libAuthor.value = "George R. R. Martin"
+
+//Display Pages
+libPages.type="text";
+libPages.classList.add("pages");
+libPages.for="pages";
+libPages.disabled = true;
+libPages.value = 864;
+
+//Display Read
+libRead.type="checkbox";
+libRead.classList.add("read")
+libRead.for="read";
+libRead.checked=true;
+
+//Cards
+cards.classList.add("card");
+
+//Div Container
+libDiv.style.display="flex";
+libDiv.classList.add("libDiv");
+
+//Add Layout
+bookContainer.after(libDiv);
+libDiv.appendChild(cards);
+cards.appendChild(cloneTitle);
+cards.appendChild(libTitle);
+cards.appendChild(cloneAuthor);
+cards.appendChild(libAuthor);
+cards.appendChild(clonePages)
+cards.appendChild(libPages);
+cards.appendChild(cloneRead);
+cards.appendChild(libRead);
+
+
+//Add books to page
 let myLibrary = [];
 
 function Book(title,author,pages,read){
@@ -120,27 +184,93 @@ function Book(title,author,pages,read){
     this.read=read;
 }
 
-function addBookToLibrary(){
-    console.log(iTitle.value,iAuthor.value,iPages.value,iRead.checked);
+const myCards = [];
+const myLabelTitle = [];
+const myInputTitle = [];
+const myLabelAuthor = [];
+const myInputAuthor = [];
+const myLabelPages = [];
+const myInputPages = [];
+const myLabelRead = [];
+const myInputRead = [];
+let last_element;
+let index = "";
+let n = 0;
+
+function createNewCard(){
+    myLabelTitle.push("label_title"+n);
+    myInputTitle.push("input_title"+n);
+    myLabelAuthor.push("label_auhtor"+n);
+    myInputAuthor.push("input_author"+n);
+    myLabelPages.push("label_pages"+n);
+    myInputPages.push("input_pages"+n);
+    myLabelRead.push("label_read"+n);
+    myInputRead.push("input_read"+n);
+    myLabelTitle[n] = lTitle.cloneNode(true);
+    myInputTitle[n] = iTitle.cloneNode(true);
+    myLabelAuthor[n] = lAuthor.cloneNode(true);
+    myInputAuthor[n] = iAuthor.cloneNode(true);
+    myLabelPages[n] = lPages.cloneNode(true);
+    myInputPages[n] = iPages.cloneNode(true);
+    myLabelRead[n] = lRead.cloneNode(true);
+    myInputRead[n] = iRead.cloneNode(true);
+    index = "card-"+n;
+    myCards.push("cards"+n);
+    myCards[n] = document.createElement("div");
+    myCards[n].classList.add("card");
+    myCards[n].setAttribute("id","card-"+n);
+    if(myCards.length ===1){
+        cards.after(myCards[n]);
+    } else{
+        last_element.after(myCards[n]);
+    }
+    myCards[n].appendChild(myLabelTitle[n]);
+    myCards[n].appendChild(myInputTitle[n]);
+    myCards[n].appendChild(myLabelAuthor[n]);
+    myCards[n].appendChild(myInputAuthor[n]);
+    myCards[n].appendChild(myLabelPages[n]);
+    myCards[n].appendChild(myInputPages[n]);
+    myCards[n].appendChild(myLabelRead[n]);
+    myCards[n].appendChild(myInputRead[n]);
+    last_element = document.getElementById("card-"+n);
 }
 
-//Flex Layout for each Book
+function addBookToLibrary(){
+    myLibrary.forEach(element => {
+        if(element.read === "Read"){
+            myInputTitle[n].value = element.title;
+            myInputAuthor[n].value = element.author;
+            myInputPages[n].value = element.pages;
+            myInputRead[n].checked=true;
+        }
+        else{
+            myInputTitle[n].value = element.title;
+            myInputAuthor[n].value = element.author;
+            myInputPages[n].value = element.pages;
+            myInputRead[n].checked=false;
+        }
+    });
+    n+=1;
+}
 
-const libDiv = document.createElement("div");
-const libTitle = document.createElement("input");
-const libAuthor = document.createElement("input");
-const libPages = document.createElement("input");
-const libRead = document.createElement("input");
+//Clean input for add Book
+function clearInputs(){
+    iTitle.value="";
+    iAuthor.value="";
+    iPages.value="";
+    iRead.checked=false;
+}
 
-libDiv.classList.add("libDiv");
-libTitle.classList.add("title");
-libAuthor.classList.add("author");
-libPages.classList.add("author");
-libRead.classList.add("pages");
+addBtn.addEventListener("click",function(e){
+    if(iRead.checked){
+        myLibrary.push(new Book(iTitle.value,iAuthor.value,iPages.value,"Read"))
+    } else{
+        myLibrary.push(new Book(iTitle.value,iAuthor.value,iPages.value,"Not read")) 
+    }
+    createNewCard();
+    addBookToLibrary();
+    toggleLibrary();
+    toggleAddBook();
+    clearInputs();
+})
 
-//Add Layout
-bookContainer.after(libDiv);
-libDiv.appendChild(libTitle);
-libDiv.appendChild(libAuthor);
-libDiv.appendChild(libPages);
-libDiv.appendChild(libRead);
